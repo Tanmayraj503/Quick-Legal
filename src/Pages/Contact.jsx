@@ -75,16 +75,16 @@ export default function Contact() {
                             <div className="text-[#bd9c2d] text-xl font-semibold "> Contact Information </div>
                             <div className="mt-4 space-y-4 mb-6">
                                 <div className="flex items-center  bg-[#0b122967] gap-4 p-2 rounded-xl border border-gray-800">
-                                    <span className="text-[#bd9c2d] bg-[#bd9b2d4a] rounded-lg h-10 items-center flex justify-center w-10"><MdEmail className="text-2xl" /></span>
+                                    <span className="text-[#bd9c2d] bg-[#bd9b2d4a] rounded-lg h-10 shrink-0 items-center flex justify-center w-10"><MdEmail className="text-2xl" /></span>
                                     <div className="flex flex-col text-sm sm:text-base ">
                                         <h2 className="font-semibold text-gray-300">
                                             Email</h2>
-                                        <p className="text-gray-400 sm:block hidden mb-2">tanmayraj707@gmail.com</p>
-                                        <p className="text-gray-400 block sm:hidden mb-2">tanmayraj 707@gmail. com</p>
+                                        <p className="text-gray-400 break-all  mb-2">tanmayraj707@gmail.com</p>
+                                        
                                     </div>
                                 </div>
                                 <div className="flex items-center bg-[#0b122966] gap-4 p-2 rounded-xl border border-gray-800">
-                                    <span className="text-[#bd9c2d] bg-[#bd9b2d4a]  rounded-lg h-10 items-center flex justify-center w-10"><FaLocationDot className="text-2xl" />
+                                    <span className="text-[#bd9c2d] bg-[#bd9b2d4a] shrink-0 rounded-lg h-10 items-center flex justify-center w-10"><FaLocationDot className="text-2xl" />
                                     </span>
                                     <div className="flex flex-col text-sm sm:text-base">
                                         <h2 className="font-semibold text-gray-300">Location</h2>
