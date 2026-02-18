@@ -9,6 +9,8 @@ import { FaLinkedin } from "react-icons/fa";
 import { FaRegUser } from "react-icons/fa";
 import { FaRegMessage } from "react-icons/fa6";
 import { useState } from "react";
+import Footer from "../components/Footer";
+import Header from "../components/Header";
 
 
 export default function Contact() {
@@ -58,12 +60,12 @@ export default function Contact() {
     };
     return (
         <>
-
+            <Header />
             <section className="contact">
-                <div className="contact-container  min-w-full min-h-screen pt-26 lg:pt-28 pb-24">
+                <div className="contact-container  min-w-full min-h-screen pt-10 lg:pt-12 pb-24">
                     <div className="text-center px-4">
 
-                        <h1 className=" pt-28 lg:pt-30 text-[#bd9c2d] font-semibold text-[36px] sm:text-[42px] md:text-5xl">Let's Get In Touch</h1>
+                        <h1 className=" pt-24 lg:pt-26 mb-4 text-[#bd9c2d] font-bold text-[36px] sm:text-[42px] md:text-5xl">Let's Get In Touch</h1>
                         <p className="text-gray-400 mt-1 text-lg max-w-3xl mx-auto">
                             Feel free to reach out to me in case of reporting any error or for some recommendations.
                         </p>
@@ -75,16 +77,16 @@ export default function Contact() {
                             <div className="text-[#bd9c2d] text-xl font-semibold "> Contact Information </div>
                             <div className="mt-4 space-y-4 mb-6">
                                 <div className="flex items-center  bg-[#0b122967] gap-4 p-2 rounded-xl border border-gray-800">
-                                    <span className="text-[#bd9c2d] bg-[#bd9b2d4a] rounded-lg h-10 shrink-0 items-center flex justify-center w-10"><MdEmail className="text-2xl" /></span>
+                                    <span className="text-[#bd9c2d] bg-[#bd9b2d31] rounded-lg h-10 shrink-0 items-center flex justify-center w-10"><MdEmail className="text-2xl" /></span>
                                     <div className="flex flex-col text-sm sm:text-base ">
                                         <h2 className="font-semibold text-gray-300">
                                             Email</h2>
                                         <p className="text-gray-400 break-all  mb-2">tanmayraj707@gmail.com</p>
-                                        
+
                                     </div>
                                 </div>
                                 <div className="flex items-center bg-[#0b122966] gap-4 p-2 rounded-xl border border-gray-800">
-                                    <span className="text-[#bd9c2d] bg-[#bd9b2d4a] shrink-0 rounded-lg h-10 items-center flex justify-center w-10"><FaLocationDot className="text-2xl" />
+                                    <span className="text-[#bd9c2d] bg-[#bd9b2d31] shrink-0 rounded-lg h-10 items-center flex justify-center w-10"><FaLocationDot className="text-2xl" />
                                     </span>
                                     <div className="flex flex-col text-sm sm:text-base">
                                         <h2 className="font-semibold text-gray-300">Location</h2>
@@ -99,26 +101,26 @@ export default function Contact() {
                                 <a href="https://github.com/Tanmayraj503"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="h-10 bg-[#7f6a26] w-10 rounded-xl flex items-center justify-center text-gray-300 hover:text-purple-900">
+                                    className="h-10 bg-[#514317] w-10 rounded-xl flex items-center justify-center text-gray-300 hover:text-purple-900">
 
                                     <FaGithub className="text-xl" />
                                 </a>
                                 <a href="https://www.instagram.com/tanmay.raj53"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="h-10 bg-[#7f6a26] w-10 rounded-xl flex items-center justify-center text-gray-300 hover:text-pink-600">
+                                    className="h-10 bg-[#514317] w-10 rounded-xl flex items-center justify-center text-gray-300 hover:text-pink-600">
                                     <FaInstagram className="text-xl" />
                                 </a>
                                 <a href="https://www.youtube.com/watch?v=DQS6mU8Uhn8"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="h-10 bg-[#7f6a26] w-10 rounded-xl flex items-center justify-center text-gray-300 hover:text-blue-400">
+                                    className="h-10 bg-[#514317] w-10 rounded-xl flex items-center justify-center text-gray-300 hover:text-blue-400">
                                     <FaLinkedin className="text-xl" />
                                 </a>
                                 <a href="mailto:tanmayraj707@gmail.com"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="h-10 bg-[#7f6a26] w-10 rounded-xl flex items-center justify-center text-gray-300 hover:text-yellow-500">
+                                    className="h-10 bg-[#514317] w-10 rounded-xl flex items-center justify-center text-gray-300 hover:text-yellow-500">
                                     <FaEnvelope className="text-xl" />
                                 </a>
                             </div>
@@ -193,7 +195,7 @@ export default function Contact() {
                     </div>
                 </div>
             </section>
-
+            <Footer />
         </>
     );
 }

@@ -39,3 +39,9 @@ body {
     border-radius: 10px;
 
 }
+
+.footer-icon {
+  @apply  text-xl rounded-full bg-[#122630ba] flex h-10 w-10
+          justify-center items-center cursor-pointer flex-wrap
+         transition-all duration-300 ;
+}
