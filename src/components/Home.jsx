@@ -22,35 +22,36 @@ export default function Home() {
         setAnalysis(null);
 
         try {
-            const response = await fetch("/api/analyze", {
+            const response = await fetch("http://localhost:5000/api/analyze", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({ input })
-
             });
+
             if (!response.ok) {
                 throw new Error("Server error");
             }
 
             const data = await response.json();
-            const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-            if (!text) throw new Error("Invalid response structure");
+            console.log("CLEAN RESPONSE:", data);
 
-            const cleanText = text.replace(/```json|```/g, "").trim();
-            const parsed = JSON.parse(cleanText);
-            setAnalysis(parsed);
-        }
-        catch (error) {
+            // ✅ Directly use backend response
+            if (!data.trustScore || !data.risks || !data.severity) {
+                throw new Error("Invalid response structure");
+            }
+
+            setAnalysis(data);
+
+        } catch (error) {
             console.log("Analysis error: ", error);
             setAnalysis({
                 trustScore: 0,
-                risks: ["Error analyzing document. Please add your Gemini API key or check the format."],
+                risks: ["Error analyzing document. Please check your backend or API key."],
                 severity: ["high"]
             });
-        }
-        finally {
+        } finally {
             setLoading(false);
         }
     };
@@ -121,43 +122,45 @@ export default function Home() {
                     </div>
                 </div>
                 {analysis && (
-                    < div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl border-opacity-20 p-6 shadow-2xl">
-                        <div className="flex items-center justify-between mb-8">
-                            <h3 className="text-2xl font-bold text-white">Analysis Results</h3>
-                            <div className="text-center">
-                                <div className="text-sm text-purple-200 mb-1">Trust Score</div>
-                                <div className={`text-4xl font-bold ${getTrustcolor(analysis.trustScore)}`}>
-                                    {analysis.trustScore}
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="space-y-4">
-                            <h4 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-                                <IoAlertCircle className="w-6 h-6 text-red-400" />
-                                Key Risks Identified
-                            </h4>
-
-                            {analysis.risks.map((risk, index) => (
-                                <div
-                                    key={index}
-                                    className={`p-4 rounded-lg border ${getSeveritycolor(analysis.severity[index])} transition-all hover:scale-102`}
-                                >
-                                    <div className="items-start gap-3 flex">
-                                        {analysis.severity[index] == 'high' ?
-                                            (<GoXCircleFill className="w-6 h-6 shrink-0 mt-0.5" />
-                                            ) : analysis.severity[index] == 'medium' ? (
-                                                <IoAlertCircle className="w-6 h-6 shrink-0 mt-0.5" />
-                                            ) :
-                                                (<FaCheckCircle className="w-6 h-6 shrink-0 mt-0.5" />)
-                                        }
-                                        <div>
-                                            <div className="font-semibold mb-1 uppercase text-xs">{analysis.severity[index]} Risk</div>
-                                            <div className="font-medium">{risk}</div>
-                                        </div>
+                    <div className="px-7">
+                        < div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl border-opacity-20 p-6 mt-10 max-w-305 mx-auto shadow-2xl">
+                            <div className="flex items-center justify-between mb-8">
+                                <h3 className="text-2xl font-bold text-white">Analysis Results</h3>
+                                <div className="text-center">
+                                    <div className="text-sm text-purple-200 mb-1">Trust Score</div>
+                                    <div className={`text-4xl font-bold ${getTrustcolor(analysis.trustScore)}`}>
+                                        {analysis.trustScore}
                                     </div>
                                 </div>
-                            ))}
+                            </div>
+
+                            <div className="space-y-4">
+                                <h4 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+                                    <IoAlertCircle className="w-6 h-6 text-red-400" />
+                                    Key Risks Identified
+                                </h4>
+
+                                {analysis.risks.map((risk, index) => (
+                                    <div
+                                        key={index}
+                                        className={`p-4 rounded-lg border ${getSeveritycolor(analysis.severity[index])} transition-all hover:scale-102`}
+                                    >
+                                        <div className="items-start gap-3 flex">
+                                            {analysis.severity[index] == 'high' ?
+                                                (<GoXCircleFill className="w-6 h-6 shrink-0 mt-0.5" />
+                                                ) : analysis.severity[index] == 'medium' ? (
+                                                    <IoAlertCircle className="w-6 h-6 shrink-0 mt-0.5" />
+                                                ) :
+                                                    (<FaCheckCircle className="w-6 h-6 shrink-0 mt-0.5" />)
+                                            }
+                                            <div>
+                                                <div className="font-semibold mb-1 uppercase text-xs">{analysis.severity[index]} Risk</div>
+                                                <div className="font-medium">{risk}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 )}

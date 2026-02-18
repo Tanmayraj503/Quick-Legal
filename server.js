@@ -31,7 +31,7 @@ const server = http.createServer(async (req, res) => {
                     return;
                 }
 
-                const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+                const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
                 const prompt = `
 Analyze this Terms of Service or legal document and identify the key risks for users.
@@ -70,4 +70,4 @@ ${input}
     }
 });
 
-server.listen(3001, () => console.log("Server running on http://localhost:3001"));
+server.listen(5000, () => console.log("Server running on http://localhost:5000"));
