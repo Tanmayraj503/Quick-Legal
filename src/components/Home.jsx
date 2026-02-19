@@ -36,7 +36,7 @@ export default function Home() {
             const data = await response.json();
             console.log("CLEAN RESPONSE:", data);
 
-            // ✅ Directly use backend response
+           
             if (!data.trustScore || !data.risks || !data.severity) {
                 throw new Error("Invalid response structure");
             }
@@ -76,12 +76,12 @@ export default function Home() {
             <Header />
             <div className="min-h-screen pt-10 lg:pt-12 pb-24">
                 <div className="flex pt-24 lg:pt-26 mx-auto flex-col justify-center items-center px-7">
-                    <h1 className="text-[#bd9c2d]  font-bold text-[36px] sm:text-[42px] md:text-5xl mb-5">
+                    <h1 className="text-[#bd9c2d] text-center font-bold text-[36px] sm:text-[42px] md:text-5xl mb-5">
                         Stop Signing Away Your Rights
                     </h1>
                     <p className="text-gray-300 text-center md:text-xl">Instantly decode Terms of Service and understand what you're agreeing to</p>
                 </div>
-                <div className="flex justify-center items-center gap-20">
+                <div className="flex flex-wrap justify-center items-center sm:gap-20 px-7 gap-4">
                     <div className="mt-10 flex flex-col justify-center items-center">
                         <div className="flex gap-2 items-center">
                             <span className="text-gray-400"><AiOutlineRise className="text-2xl" /></span>
@@ -92,9 +92,9 @@ export default function Home() {
                     <div className="mt-10 flex flex-col justify-center items-center">
                         <div className="flex gap-2 items-center">
                             <span className="text-gray-400"><IoTimeOutline className="text-2xl" /></span>
-                            <h1 className="text-gray-300 text-3xl font-bold">5 s</h1>
+                            <h1 className="text-gray-300 text-3xl font-bold">15 s</h1>
                         </div>
-                        <p className="text-lg text-[#bd9c2d]">Average Response Time</p>
+                        <p className="text-lg text-center text-[#bd9c2d]">Average Response Time</p>
                     </div>
                 </div>
 
@@ -103,19 +103,19 @@ export default function Home() {
                     <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl border-opacity-20 p-8  shadow-2xl">
                         <div className="mb-6 ">
                             <div className="flex items-start justify-start">
-                                <label className="block text-[#ad8f2a] text-start mb-4 text-lg font-medium">Paste URL or Legal Document Here!</label>
+                                <label className="block text-[#ad8f2a] sm:text-start text-center mb-4 text-lg font-medium">Paste URL or Legal Document Here!</label>
                             </div>
                             <textarea name="text" id="text"
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
-                                className="w-full h-48 px-4 py-3  bg-opacity-10 border border-[white] border-opacity-30 rounded-xl text-gray-300 placeholder-[gray-400] placeholder-opacity-50 focus:outline-none focus:ring-1 focus:ring-[#caa630] focus:border-[#caa630] resize-none"
+                                className="w-full h-48 px-4 py-3  bg-opacity-10 border border-[white] border-opacity-30 rounded-xl text-gray-300 placeholder-[gray-400] placeholder-opacity-50 focus:outline-none focus:ring-1 focus:ring-[#caa630] focus:border-[#caa630] placeholder:text-center sm:placeholder:text-start resize-none"
                                 placeholder="Paste terms of service URL or text here..."
                             />
                         </div>
                         <button
                             onClick={analyzedocument}
                             disabled={loading || !input.trim()}
-                            className="px-16 bg-linear-to-r from-[#299ead] to-[#16727e] text-gray-300 py-4 rounded-xl font-semibold text-lg hover:from-[#22818e] hover:to-[#125e68] transition disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                            className="px-4 sm:px-16 w-full sm:w-auto bg-linear-to-r from-[#299ead] to-[#16727e] text-gray-300 py-4 rounded-xl font-semibold sm:text-lg hover:from-[#22818e] hover:to-[#125e68] transition text-base disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
                         >
                             {loading ? 'Analyzing...' : 'Analyze Document'}
                         </button>
