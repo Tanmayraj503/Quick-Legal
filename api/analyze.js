@@ -19,14 +19,19 @@ export default async function handler(req, res) {
     });
 
     const prompt = `
-Analyze this legal document and identify key risks.
+You are a strict JSON generator.
 
-Respond ONLY in valid JSON:
+Return ONLY valid JSON.
+No explanations.
+No extra text.
+No markdown.
+
+Format exactly like:
 
 {
-  "trustScore": number (0-100),
-  "risks": ["risk 1", "risk 2", "risk 3"],
-  "severity": ["high", "medium", "low"]
+  "trustScore": 75,
+  "risks": ["risk 1", "risk 2"],
+  "severity": ["high", "medium"]
 }
 
 Document:
@@ -34,11 +39,15 @@ ${input}
 `;
 
     const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
+    const text = result.response.text();
 
-    const cleanedText = text.replace(/```json|```/g, "").trim();
-    const parsed = JSON.parse(cleanedText);
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+
+    if (!jsonMatch) {
+      throw new Error("No JSON found in response");
+    }
+
+    const parsed = JSON.parse(jsonMatch[0]);
 
     return res.status(200).json(parsed);
 
