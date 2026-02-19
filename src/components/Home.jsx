@@ -9,12 +9,11 @@ import { IoTimeOutline } from "react-icons/io5";
 
 
 export default function Home() {
-
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
     const [analysis, setAnalysis] = useState(null);
 
-    const analyzedocument = async () => {
+     const analyzedocument = async () => {
 
         if (!input.trim()) return;
 
@@ -22,7 +21,7 @@ export default function Home() {
         setAnalysis(null);
 
         try {
-            const response = await fetch("http://localhost:5000/api/analyze", {
+            const response = await fetch("/api/analyze", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -55,6 +54,7 @@ export default function Home() {
             setLoading(false);
         }
     };
+
 
     const getSeveritycolor = (severity) => {
         switch (severity) {
