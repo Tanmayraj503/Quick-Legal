@@ -51,18 +51,18 @@ export default function About() {
                         <motion.p className='text-[#bd9c2d]  font-bold text-[36px] sm:text-[42px] md:text-5xl '
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, amount: 0.6 }}
+                            viewport={{ once: true, amount: 0.4 }}
                             transition={{ duration: 0.6, ease: "easeOut" }}>Built for People,</motion.p>
                         <motion.p className='text-[#bd9c2d] font-bold  mb-1 text-[36px] sm:text-[42px] md:text-5xl'
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, amount: 0.6 }}
+                            viewport={{ once: true, amount: 0.4 }}
                             transition={{ delay: 0.1, duration: 0.6, ease: "easeOut" }}>Not Corporations</motion.p>
                     </div>
                     <motion.p className='text-gray-300 text-lg mt-6 max-w-200 text-center'
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, amount: 0.6 }}
+                        viewport={{ once: true, amount: 0.4 }}
                         transition={{ delay: 0.2, duration: 0.6, ease: "easeOut" }}>
                         Quick-Legal was born out of frustration. Every day, millions of people click "I Agree" on documents they've never read - documents that can sign away their privacy, data, and rights. We built Quick-Legal to change that.</motion.p>
                 </div>
@@ -119,7 +119,7 @@ export default function About() {
                     <motion.h1 className='text-center text-[40px] font-semibold text-[#bd9c2d] mt-30 mb-10'
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, amount: 0.6 }}
+                        viewport={{ once: true, amount: 0.4 }}
                         transition={{ duration: 0.6, ease: "easeOut" }}>What We Stand For</motion.h1>
                     <div className='grid md:grid-cols-2 grid-cols-1 gap-5'>
                         {stand.map((titl, index) => {
@@ -163,7 +163,7 @@ export default function About() {
                         <motion.h1 className='text-center text-[40px] font-semibold text-[#bd9c2d] mt-10 mb-10'
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true, amount: 0.6 }}
+                            viewport={{ once: true, amount: 0.4 }}
                             transition={{ duration: 0.6, ease: "easeOut" }}>Meet the Team</motion.h1>
                         <motion.div className='mb-8'
                             initial={{ opacity: 0, y: 20 }}
