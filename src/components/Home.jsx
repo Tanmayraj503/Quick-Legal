@@ -13,7 +13,7 @@ export default function Home() {
     const [loading, setLoading] = useState(false);
     const [analysis, setAnalysis] = useState(null);
 
-     const analyzedocument = async () => {
+    const analyzedocument = async () => {
 
         if (!input.trim()) return;
 
@@ -36,8 +36,12 @@ export default function Home() {
             const data = await response.json();
             console.log("CLEAN RESPONSE:", data);
 
-           
-            if (!data.trustScore || !data.risks || !data.severity) {
+
+            if (
+                typeof data.trustScore !== "number" ||
+                !Array.isArray(data.risks) ||
+                !Array.isArray(data.severity)
+            ) {
                 throw new Error("Invalid response structure");
             }
 
