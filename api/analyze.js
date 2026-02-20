@@ -1,5 +1,26 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
+const CHUNK_SIZE = 3000; // safe size
+
+function splitIntoChunks(text) {
+  const chunks = [];
+  for (let i = 0; i < text.length; i += CHUNK_SIZE) {
+    chunks.push(text.slice(i, i + CHUNK_SIZE));
+  }
+  return chunks;
+}
+
+function calculateTrustScore(severities) {
+  const weights = { low: 10, medium: 20, high: 35 };
+  let totalRisk = 0;
+
+  severities.forEach((s) => {
+    totalRisk += weights[s] || 0;
+  });
+
+  return Math.max(0, 100 - totalRisk);
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -12,87 +33,70 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Input too short" });
     }
 
-    // 🔒 Limit document size (VERY important for stability)
-    const MAX_LENGTH = 4000;
-    const trimmedInput =
-      input.length > MAX_LENGTH
-        ? input.substring(0, MAX_LENGTH)
-        : input;
-
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash", // More stable than 2.5 for this use case
+      model: "gemini-1.5-flash",
     });
 
-    const prompt = `
-You are a strict JSON generator.
+    const chunks = splitIntoChunks(input);
 
-Analyze this legal document and identify key user risks.
-Classify each risk as "high", "medium", or "low".
+    let allRisks = [];
+    let allSeverities = [];
 
-Rules:
-- Limit to maximum 8 risks.
-- Be concise.
-- No markdown.
-- No extra text.
-- Return ONLY valid JSON.
+    for (const chunk of chunks) {
+      const prompt = `
+Analyze this legal document section.
+Identify key user risks.
+Classify each as "high", "medium", or "low".
+Return ONLY valid JSON:
 
 Format:
 {
-  "trustScore": number (0-100),
+ "trustScore": number (0-100),
   "risks": ["risk 1", "risk 2"],
   "severity": ["high", "medium"]
 }
 
-Document:
-${trimmedInput}
+Document Section:
+${chunk}
 `;
 
-    // 🔥 Force Gemini to return JSON only
-    const result = await Promise.race([
-      model.generateContent({
+      const result = await model.generateContent({
         contents: [{ role: "user", parts: [{ text: prompt }] }],
         generationConfig: {
           responseMimeType: "application/json",
           temperature: 0.2,
         },
-      }),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("AI timeout")), 9000)
-      ),
-    ]);
+      });
 
-    const rawText = result.response.text();
+      const parsed = JSON.parse(result.response.text());
 
-    let parsed;
+      if (Array.isArray(parsed.risks)) {
+        allRisks.push(...parsed.risks);
+      }
 
-    try {
-      parsed = JSON.parse(rawText);
-    } catch {
-      throw new Error("Invalid JSON from AI");
+      if (Array.isArray(parsed.severity)) {
+        allSeverities.push(...parsed.severity);
+      }
     }
 
-    // 🛡 Structure validation
-    if (
-      typeof parsed.trustScore !== "number" ||
-      !Array.isArray(parsed.risks) ||
-      !Array.isArray(parsed.severity)
-    ) {
-      throw new Error("Invalid response structure");
-    }
+    // Remove duplicates
+    const uniqueRisks = [...new Set(allRisks)];
 
-    return res.status(200).json(parsed);
+    const trustScore = calculateTrustScore(allSeverities);
+
+    return res.status(200).json({
+      trustScore,
+      risks: uniqueRisks.slice(0, 10),
+      severity: allSeverities.slice(0, 10),
+    });
 
   } catch (error) {
     console.error("Gemini Error:", error.message);
 
-    // Never crash frontend
     return res.status(200).json({
       trustScore: 0,
-      risks: [
-        "Analysis service temporarily unavailable. Please try again."
-      ],
+      risks: ["Analysis service temporarily unavailable. Please try again."],
       severity: ["high"],
     });
   }
