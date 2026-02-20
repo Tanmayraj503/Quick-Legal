@@ -49,7 +49,7 @@ Document:
 ${trimmedInput}
 `;
 
-    // ⏳ Add timeout protection (prevents Vercel crash)
+    
     const result = await Promise.race([
       model.generateContent(prompt),
       new Promise((_, reject) =>
@@ -59,7 +59,7 @@ ${trimmedInput}
 
     const text = result.response.text();
 
-    // 🔧 Safe JSON extraction
+    
     const jsonMatch = text.match(/\{[\s\S]*\}/);
 
     if (!jsonMatch) {
@@ -68,7 +68,7 @@ ${trimmedInput}
 
     const parsed = JSON.parse(jsonMatch[0]);
 
-    // 🛡 Validate structure
+    
     if (
       typeof parsed.trustScore !== "number" ||
       !Array.isArray(parsed.risks) ||
@@ -84,7 +84,7 @@ ${trimmedInput}
 
     return res.status(200).json({
       trustScore: 0,
-      risks: ["Analysis service temporarily unavailable. Please try again."],
+      risks: ["Analysis service temporarily unavailablewtf. Please try again."],
       severity: ["high"],
     });
   }
