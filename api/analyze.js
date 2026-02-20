@@ -1,26 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const CHUNK_SIZE = 3000; // safe size
-
-function splitIntoChunks(text) {
-  const chunks = [];
-  for (let i = 0; i < text.length; i += CHUNK_SIZE) {
-    chunks.push(text.slice(i, i + CHUNK_SIZE));
-  }
-  return chunks;
-}
-
-function calculateTrustScore(severities) {
-  const weights = { low: 10, medium: 20, high: 35 };
-  let totalRisk = 0;
-
-  severities.forEach((s) => {
-    totalRisk += weights[s] || 0;
-  });
-
-  return Math.max(0, 100 - totalRisk);
-}
-
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -29,74 +8,55 @@ export default async function handler(req, res) {
   try {
     const { input } = req.body;
 
-    if (!input || input.trim().length < 20) {
-      return res.status(400).json({ error: "Input too short" });
+    if (!input) {
+      return res.status(400).json({ error: "No input provided" });
     }
 
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
+      model: "gemini-2.5-flash",
     });
 
-    const chunks = splitIntoChunks(input);
+    const prompt = `
+You are a strict JSON generator.
 
-    let allRisks = [];
-    let allSeverities = [];
+Return ONLY valid JSON.
+No explanations.
+No extra text.
+No markdown.
 
-    for (const chunk of chunks) {
-      const prompt = `
-Analyze this legal document section.
-Identify key user risks.
-Classify each as "high", "medium", or "low".
-Return ONLY valid JSON:
+Format exactly like:
 
-Format:
 {
- "trustScore": number (0-100),
+  "trustScore": number (0-100),
   "risks": ["risk 1", "risk 2"],
   "severity": ["high", "medium"]
 }
 
-Document Section:
-${chunk}
+Document:
+${input}
 `;
 
-      const result = await model.generateContent({
-        contents: [{ role: "user", parts: [{ text: prompt }] }],
-        generationConfig: {
-          responseMimeType: "application/json",
-          temperature: 0.2,
-        },
-      });
+    const result = await model.generateContent(prompt);
+    const text = result.response.text();
 
-      const parsed = JSON.parse(result.response.text());
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
 
-      if (Array.isArray(parsed.risks)) {
-        allRisks.push(...parsed.risks);
-      }
-
-      if (Array.isArray(parsed.severity)) {
-        allSeverities.push(...parsed.severity);
-      }
+    if (!jsonMatch) {
+      throw new Error("No JSON found in response");
     }
 
-    // Remove duplicates
-    const uniqueRisks = [...new Set(allRisks)];
+    const parsed = JSON.parse(jsonMatch[0]);
 
-    const trustScore = calculateTrustScore(allSeverities);
-
-    return res.status(200).json({
-      trustScore,
-      risks: uniqueRisks.slice(0, 10),
-      severity: allSeverities.slice(0, 10),
-    });
+    return res.status(200).json(parsed);
 
   } catch (error) {
-    console.error("Gemini Error:", error.message);
+    console.error("Gemini Error:", error);
 
-    return res.status(200).json({
+    return res.status(500).json({
       trustScore: 0,
-      risks: ["Analysis service temporarily unavailable. Please try again."],
+      risks: ["Internal server error. Please try again."],
       severity: ["high"],
     });
   }
