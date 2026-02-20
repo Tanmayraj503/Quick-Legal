@@ -13,7 +13,7 @@ export default async function handler(req, res) {
     }
 
     // 🔒 Limit input length (VERY IMPORTANT)
-    const MAX_LENGTH = 6000;
+    const MAX_LENGTH = 10000;
     const trimmedInput =
       input.length > MAX_LENGTH
         ? input.substring(0, MAX_LENGTH)
@@ -22,7 +22,7 @@ export default async function handler(req, res) {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash", // 🔥 More stable & faster
+      model: "gemini-2.5-flash", 
     });
 
     const prompt = `
