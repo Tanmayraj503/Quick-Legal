@@ -6,6 +6,8 @@ import { FaCheckCircle } from "react-icons/fa";
 import { GoXCircleFill } from "react-icons/go";
 import { AiOutlineRise } from "react-icons/ai";
 import { IoTimeOutline } from "react-icons/io5";
+import ScrollToTopButton from "./ScrollToTopButton";
+import { motion } from 'framer-motion';
 
 
 export default function Home() {
@@ -80,12 +82,25 @@ export default function Home() {
             <Header />
             <div className="min-h-screen pt-10 lg:pt-12 pb-24">
                 <div className="flex pt-24 lg:pt-26 mx-auto flex-col justify-center items-center px-7">
-                    <h1 className="text-[#bd9c2d] text-center font-bold text-[36px] sm:text-[42px] md:text-5xl mb-5">
+                    <motion.h1 className="text-[#bd9c2d] text-center font-bold text-[36px] sm:text-[42px] md:text-5xl mb-5"
+                    initial={{opacity:0, y:20}}
+                    whileInView={{opacity:1, y:0}}
+                    viewport={{once:true, amount:0.4}}
+                    transition={{ease:"easeOut", duration:0.6}}>
                         Stop Signing Away Your Rights
-                    </h1>
-                    <p className="text-gray-300 text-center md:text-xl">Instantly decode Terms of Service and understand what you're agreeing to</p>
+                    </motion.h1>
+                    <motion.p className="text-gray-300 text-center md:text-xl"
+                    initial={{opacity:0, y:20}}
+                    whileInView={{opacity:1, y:0}}
+                    viewport={{once:true, amount:0.4}}
+                    transition={{delay:0.1, ease:"easeOut", duration:0.6}}>
+                        Instantly decode Terms of Service and understand what you're agreeing to</motion.p>
                 </div>
-                <div className="flex flex-wrap justify-center items-center sm:gap-20 px-7 gap-4">
+                <motion.div className="flex flex-wrap justify-center items-center sm:gap-20 px-7 gap-4"
+                initial={{opacity:0, y:20}}
+                    whileInView={{opacity:1, y:0}}
+                    viewport={{once:true, amount:0.4}}
+                    transition={{ease:"easeOut", duration:0.6, delay:0.2}}>
                     <div className="mt-10 flex flex-col justify-center items-center">
                         <div className="flex gap-2 items-center">
                             <span className="text-gray-400"><AiOutlineRise className="text-2xl" /></span>
@@ -100,11 +115,15 @@ export default function Home() {
                         </div>
                         <p className="text-lg text-center text-[#bd9c2d]">Average Response Time</p>
                     </div>
-                </div>
+                </motion.div>
 
                 {/* Main Content */}
                 <div className=" mt-15 max-w-7xl px-7 mx-auto">
-                    <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl border-opacity-20 p-8  shadow-2xl">
+                    <motion.div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl border-opacity-20 p-8  shadow-2xl"
+                    initial={{opacity:0, y:20}}
+                    whileInView={{opacity:1, y:0}}
+                    viewport={{once:true, amount:0.4}}
+                    transition={{ease:"easeOut", duration:0.6, delay:0.26}}>
                         <div className="mb-6 ">
                             <div className="flex items-start justify-start">
                                 <label className="block text-[#ad8f2a] sm:text-start text-center mb-4 text-lg font-medium">Paste URL or Legal Document Here!</label>
@@ -123,7 +142,7 @@ export default function Home() {
                         >
                             {loading ? 'Analyzing...' : 'Analyze Document'}
                         </button>
-                    </div>
+                    </motion.div>
                 </div>
                 {analysis && (
                     <div className="px-7">
@@ -169,6 +188,7 @@ export default function Home() {
                     </div>
                 )}
             </div >
+            <ScrollToTopButton />
             <Footer />
         </>
     );
