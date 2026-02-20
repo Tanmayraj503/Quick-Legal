@@ -18,7 +18,7 @@ export default async function handler(req, res) {
       model: "gemini-2.5-flash",
     });
 
-    const prompt = `
+    const prompt = `You are a strict JSON generator.
 Analyze this Terms of Service or legal document and identify the key risks for users. For each risk, classify it as 'high', 'medium', or 'low' severity.
 
 Document:
