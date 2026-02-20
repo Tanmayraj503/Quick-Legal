@@ -47,7 +47,7 @@ export default function Home() {
             console.log("Analysis error: ", error);
             setAnalysis({
                 trustScore: 0,
-                risks: ["Error analyzing document. Please check your backend or API key."],
+                risks: ["Error analyzing document. Please try again or check the format."],
                 severity: ["high"]
             });
         } finally {
