@@ -12,8 +12,8 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Input too short" });
     }
 
-    // 🔒 Limit input length (VERY IMPORTANT)
-    const MAX_LENGTH = 10000;
+    // 🔒 Limit document size (VERY important for stability)
+    const MAX_LENGTH = 4000;
     const trimmedInput =
       input.length > MAX_LENGTH
         ? input.substring(0, MAX_LENGTH)
@@ -22,59 +22,64 @@ export default async function handler(req, res) {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash", 
+      model: "gemini-1.5-flash", // More stable than 2.5 for this use case
     });
 
     const prompt = `
 You are a strict JSON generator.
 
-Analyze this Terms of Service or legal document and identify the key risks for users.
-For each risk, classify it as "high", "medium", or "low".
+Analyze this legal document and identify key user risks.
+Classify each risk as "high", "medium", or "low".
 
-IMPORTANT:
+Rules:
+- Limit to maximum 8 risks.
 - Be concise.
-- Limit to top 8 most significant risks.
-- Respond ONLY with valid JSON.
 - No markdown.
-- No backticks.
+- No extra text.
+- Return ONLY valid JSON.
 
 Format:
 {
-  "trustScore": number,
-  "risks": ["risk description"],
-  "severity": ["high" | "medium" | "low"]
+  "trustScore": number (0-100),
+  "risks": ["risk 1", "risk 2"],
+  "severity": ["high", "medium"]
 }
 
 Document:
 ${trimmedInput}
 `;
 
-    
+    // 🔥 Force Gemini to return JSON only
     const result = await Promise.race([
-      model.generateContent(prompt),
+      model.generateContent({
+        contents: [{ role: "user", parts: [{ text: prompt }] }],
+        generationConfig: {
+          responseMimeType: "application/json",
+          temperature: 0.2,
+        },
+      }),
       new Promise((_, reject) =>
         setTimeout(() => reject(new Error("AI timeout")), 9000)
       ),
     ]);
 
-    const text = result.response.text();
+    const rawText = result.response.text();
 
-    
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    let parsed;
 
-    if (!jsonMatch) {
-      throw new Error("No JSON found in AI response");
+    try {
+      parsed = JSON.parse(rawText);
+    } catch {
+      throw new Error("Invalid JSON from AI");
     }
 
-    const parsed = JSON.parse(jsonMatch[0]);
-
-    
+    // 🛡 Structure validation
     if (
       typeof parsed.trustScore !== "number" ||
       !Array.isArray(parsed.risks) ||
       !Array.isArray(parsed.severity)
     ) {
-      throw new Error("Invalid JSON structure");
+      throw new Error("Invalid response structure");
     }
 
     return res.status(200).json(parsed);
@@ -82,9 +87,12 @@ ${trimmedInput}
   } catch (error) {
     console.error("Gemini Error:", error.message);
 
+    // Never crash frontend
     return res.status(200).json({
       trustScore: 0,
-      risks: ["Analysis service temporarily unavailablewtf. Please try again."],
+      risks: [
+        "Analysis service temporarily unavailable. Please try again."
+      ],
       severity: ["high"],
     });
   }
