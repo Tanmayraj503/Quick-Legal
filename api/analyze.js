@@ -1,45 +1,15 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const riskWeights = {
-  Low: 10,
-  Medium: 20,
-  High: 35,
-  Critical: 50
-};
-
-function calculateTrustScore(risks) {
-  let totalRisk = 0;
-
-  risks.forEach(risk => {
-    totalRisk += riskWeights[risk.severity] || 0;
-  });
-
-  const trustScore = Math.max(0, 100 - totalRisk);
-  return trustScore;
-}
-
-function safeJsonParse(text) {
-  try {
-    const cleaned = text
-      .replace(/```json/g, "")
-      .replace(/```/g, "")
-      .trim();
-    return JSON.parse(cleaned);
-  } catch (err) {
-    return null;
-  }
-}
-
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method Not Allowed" });
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
-    const { text } = req.body;
+    const { input } = req.body;
 
-    if (!text || text.length < 20) {
-      return res.status(400).json({ error: "Invalid input text" });
+    if (!input) {
+      return res.status(400).json({ error: "No input provided" });
     }
 
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -49,69 +19,40 @@ export default async function handler(req, res) {
     });
 
     const prompt = `
-You are a legal risk analysis engine.
+Analyze this Terms of Service or legal document and identify the key risks for users. For each risk, classify it as 'high', 'medium', or 'low' severity.
 
-Analyze the following legal text thoroughly.
+Document:
+${input}
 
-Instructions:
-1. Identify ALL possible legal, privacy, financial, cancellation, liability, arbitration, and data-related risks.
-2. Be exhaustive.
-3. Do NOT summarize.
-4. Do NOT give opinions.
-5. Return ONLY valid JSON.
-6. Format:
-
+Respond ONLY with a JSON object in this exact format (no markdown, no backticks):
 {
-  "risks": [
-    {
-      "title": "Short risk title",
-      "category": "Privacy | Financial | Legal | Liability | Arbitration | Data | Cancellation | Other",
-      "severity": "Low | Medium | High | Critical",
-      "explanation": "Clear explanation of the risk."
-    }
-  ]
+  "trustScore": <number between 0-100>,
+  "risks": ["risk description 1", "risk description 2", ...],
+  "severity": ["high", "medium", ...]
 }
 
-Legal Text:
-${text}
 `;
 
     const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const rawText = response.text();
+    const text = result.response.text();
 
-    const parsed = safeJsonParse(rawText);
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
 
-    if (!parsed || !parsed.risks) {
-      return res.status(500).json({
-        error: "AI did not return valid structured risk data"
-      });
+    if (!jsonMatch) {
+      throw new Error("No JSON found in response");
     }
 
-    const trustScore = calculateTrustScore(parsed.risks);
+    const parsed = JSON.parse(jsonMatch[0]);
 
-    const categoryBreakdown = {};
-
-    parsed.risks.forEach(risk => {
-      if (!categoryBreakdown[risk.category]) {
-        categoryBreakdown[risk.category] = 0;
-      }
-      categoryBreakdown[risk.category]++;
-    });
-
-    return res.status(200).json({
-      success: true,
-      totalRisks: parsed.risks.length,
-      trustScore,
-      riskBreakdownByCategory: categoryBreakdown,
-      risks: parsed.risks
-    });
+    return res.status(200).json(parsed);
 
   } catch (error) {
     console.error("Gemini Error:", error);
+
     return res.status(500).json({
-      error: "Internal server error",
-      details: error.message
+      trustScore: 0,
+      risks: ["Internal server error. Please try again."],
+      severity: ["high"],
     });
   }
 }
