@@ -42,6 +42,8 @@ export default function About() {
         FaLock,
     ];
 
+    const isMObile = window.innerWidth<768;
+
     return (
         <>
             <Header />
@@ -81,7 +83,7 @@ export default function About() {
                             animateOpacity
                             scale={1}
                             threshold={0.1}
-                            delay={0.2 + index * 0.2}
+                            delay={0.1 + index * 0.1}
                         >
                             <div
                                 key={index}
@@ -136,7 +138,7 @@ export default function About() {
                                     animateOpacity
                                     scale={1}
                                     threshold={0.1}
-                                    delay={0.2 + index * 0.2}
+                                    delay={0.1 + index * 0.1}
                                 >
                                     <div className='flex flex-col justify-center bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl py-4 px-6'>
                                         <div className='flex flex-col sm:flex-row gap-5 items-center-safe'>
