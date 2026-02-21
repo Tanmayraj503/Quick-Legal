@@ -83,7 +83,7 @@ export default function About() {
                             animateOpacity
                             scale={1}
                             threshold={0.1}
-                            delay={0.1 + index * 0.1}
+                            delay={index * 0.1}
                         >
                             <div
                                 key={index}
