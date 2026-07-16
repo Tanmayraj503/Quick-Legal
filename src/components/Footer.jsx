@@ -30,7 +30,7 @@ export default function Footer() {
                             className="footer-icon text-gray-300 hover:text-pink-600">
                             <FaInstagram />
                         </a>
-                        <a href="https://www.youtube.com/watch?v=DQS6mU8Uhn8"
+                        <a href="https://www.linkedin.com/in/tanmay-raj-5932b141b/"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="footer-icon text-gray-300 hover:text-blue-400">
